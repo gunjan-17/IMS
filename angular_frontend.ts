@@ -988,7 +988,19 @@ export class AddItemDialogComponent implements OnInit {
           }
         });
       } else {
-        this.itemService.createItem
+        this.itemService.createItem.subscribe({
+          next: () => {
+            this.snackBar.open('Item created successfully', 'Close', { duration: 3000 });
+            this.dialogRef.close(true);
+          },
+          error: () => {
+            this.snackBar.open('Error creating item', 'Close', { duration: 3000 });
+            this.loading = false;
+          }
+        });
+      }
+    }
+  }
 
 // components/admin-dashboard/admin-dashboard.component.ts
 import { Component } from '@angular/core';
