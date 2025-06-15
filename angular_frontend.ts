@@ -1002,6 +1002,69 @@ export class AddItemDialogComponent implements OnInit {
     }
   }
 
+  <!-- add-item-dialog.component.html -->
+<h2 mat-dialog-title>{{isEditing ? 'Edit Item' : 'Add New Item'}}</h2>
+<mat-dialog-content>
+  <form [formGroup]="itemForm" class="item-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Item Name</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error *ngIf="itemForm.get('name')?.hasError('required')">
+        Item name is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Quantity</mat-label>
+      <input matInput type="number" formControlName="quantity" min="0" required>
+      <mat-error *ngIf="itemForm.get('quantity')?.hasError('required')">
+        Quantity is required
+      </mat-error>
+      <mat-error *ngIf="itemForm.get('quantity')?.hasError('min')">
+        Quantity must be at least 0
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" 
+          [disabled]="!itemForm.valid || loading">
+    <mat-icon *ngIf="loading">refresh</mat-icon>
+    {{loading ? (isEditing ? 'Updating...' : 'Adding...') : (isEditing ? 'Update Item' : 'Add Item')}}
+  </button>
+</mat-dialog-actions>
+
+<style>
+/* add-item-dialog.component.css */
+.item-form {
+  min-width: 400px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+mat-dialog-content {
+  padding: 20px 24px;
+}
+
+mat-dialog-actions {
+  padding: 8px 24px 20px;
+}
+
+.mat-mdc-dialog-title {
+  margin-bottom: 16px;
+}
+</style>
+
+  
 // components/admin-dashboard/admin-dashboard.component.ts
 import { Component } from '@angular/core';
 
