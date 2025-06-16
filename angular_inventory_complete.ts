@@ -29,8 +29,15 @@ export class AuthInterceptor implements HttpInterceptor {
 // services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+
+export interface User {
+  id: number;
+  username: string;
+  name: string;
+  role: 'EMPLOYEE' | 'ADMIN';
+}
 
 @Injectable({
   providedIn: 'root'
@@ -38,15 +45,29 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
   private tokenKey = 'auth_token';
+  private userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // Load user from localStorage on initialization
+    const token = this.getToken();
+    if (token) {
+      // Optionally, decode token or fetch user data to populate userSubject
+      const storedUser = localStorage.getItem('auth_user');
+      if (storedUser) {
+        this.userSubject.next(JSON.parse(storedUser));
+      }
+    }
+  }
 
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { username, password })
       .pipe(
         tap(response => {
-          if (response.success && response.token) {
+          if (response.success && response.token && response.user) {
             localStorage.setItem(this.tokenKey, response.token);
+            localStorage.setItem('auth_user', JSON.stringify(response.user));
+            this.userSubject.next(response.user);
           }
         })
       );
@@ -56,12 +77,23 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
-  logout(): void {
-    localStorage.removeItem(this.tokenKey);
+  getUser(): User | null {
+    return this.userSubject.value;
   }
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  }
+
+  isAdmin(): boolean {
+    const user = this.getUser();
+    return user?.role === 'ADMIN';
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem('auth_user');
+    this.userSubject.next(null);
   }
 }
 
