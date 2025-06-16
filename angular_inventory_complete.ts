@@ -1,3 +1,70 @@
+//interceptors/auth.interceptor.ts
+import { Injectable } from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor
+} from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  constructor(private authService: AuthService) {}
+
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const token = this.authService.getToken();
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+    return next.handle(request);
+  }
+}
+
+// services/auth.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private apiUrl = 'http://localhost:8080/api/auth';
+  private tokenKey = 'auth_token';
+
+  constructor(private http: HttpClient) {}
+
+  login(username: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { username, password })
+      .pipe(
+        tap(response => {
+          if (response.success && response.token) {
+            localStorage.setItem(this.tokenKey, response.token);
+          }
+        })
+      );
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+}
+
 // Complete the missing add-item-dialog component
 // components/add-item-dialog/add-item-dialog.component.ts
 import { Component, Inject, OnInit } from '@angular/core';
