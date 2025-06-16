@@ -1,0 +1,126 @@
+// UserDTO.java
+package com.inventory.dto;
+
+public class UserDTO {
+    private Long id;
+    private String username;
+    private String name;
+    private String role;
+
+    // Constructors
+    public UserDTO() {}
+    
+    public UserDTO(Long id, String username, String name, String role) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.role = role;
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+}
+
+// ItemDTO.java
+package com.inventory.dto;
+
+public class ItemDTO {
+    private Long id;
+    private String name;
+    private String description;
+    private Integer quantity;
+
+    // Constructors
+    public ItemDTO() {}
+    
+    public ItemDTO(Long id, String name, String description, Integer quantity) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+}
+
+// RequestDTO.java
+package com.inventory.dto;
+
+import java.time.LocalDateTime;
+
+public class RequestDTO {
+    private Long id;
+    private Long userId;
+    private Long itemId;
+    private Integer quantity;
+    private String reason;
+    private String status;
+    private LocalDateTime requestDate;
+    private LocalDateTime responseDate;
+    private String adminComments;
+
+    // Constructors
+    public RequestDTO() {}
+    
+    public RequestDTO(Long id, Long userId, Long itemId, Integer quantity, String reason, String status,
+                     LocalDateTime requestDate, LocalDateTime responseDate, String adminComments) {
+        this.id = id;
+        this.userId = userId;
+        this.itemId = itemId;
+        this.quantity = quantity;
+        this.reason = reason;
+        this.status = status;
+        this.requestDate = requestDate;
+        this.responseDate = responseDate;
+        this.adminComments = adminComments;
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    
+    public Long getItemId() { return itemId; }
+    public void setItemId(Long itemId) { this.itemId = itemId; }
+    
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
+    
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    
+    public LocalDateTime getRequestDate() { return requestDate; }
+    public void setRequestDate(LocalDateTime requestDate) { this.requestDate = requestDate; }
+    
+    public LocalDateTime getResponseDate() { return responseDate; }
+    public void setResponseDate(LocalDateTime responseDate) { this.responseDate = responseDate; }
+    
+    public String getAdminComments() { return adminComments; }
+    public void setAdminComments(String adminComments) { this.adminComments = adminComments; }
+}
