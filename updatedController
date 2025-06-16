@@ -1,0 +1,147 @@
+// AuthController.java (unchanged, but included for completeness)
+package com.inventory.controller;
+
+import com.inventory.model.User;
+import com.inventory.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:4200")
+public class AuthController {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginData) {
+        String username = loginData.get("username");
+        String password = loginData.get("password");
+        
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        
+        if (userOpt.isPresent() && userOpt.get().getPassword().equals(password)) {
+            User user = userOpt.get();
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("user", Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "name", user.getName(),
+                "role", user.getRole().toString()
+            ));
+            return ResponseEntity.ok(response);
+        }
+        
+        return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Invalid credentials"));
+    }
+}
+
+// ItemController.java
+package com.inventory.controller;
+
+import com.inventory.dto.ItemDTO;
+import com.inventory.service.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/items")
+@CrossOrigin(origins = "http://localhost:4200")
+public class ItemController {
+    
+    @Autowired
+    private ItemService itemService;
+    
+    @GetMapping
+    public List<ItemDTO> getAllItems() {
+        return itemService.getAllItems();
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<ItemDTO> getItemById(@PathVariable Long id) {
+        ItemDTO item = itemService.getItemById(id);
+        return item != null ? ResponseEntity.ok(item) : ResponseEntity.notFound().build();
+    }
+    
+    @PostMapping
+    public ResponseEntity<ItemDTO> createItem(@RequestBody ItemDTO itemDTO) {
+        ItemDTO createdItem = itemService.createItem(itemDTO);
+        return createdItem != null ? ResponseEntity.ok(createdItem) : ResponseEntity.badRequest().build();
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<ItemDTO> updateItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO) {
+        ItemDTO updatedItem = itemService.updateItem(id, itemDTO);
+        return updatedItem != null ? ResponseEntity.ok(updatedItem) : ResponseEntity.notFound().build();
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        itemService.deleteItem(id);
+        return ResponseEntity.ok().build();
+    }
+}
+
+// RequestController.java
+package com.inventory.controller;
+
+import com.inventory.dto.RequestDTO;
+import com.inventory.service.RequestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/requests")
+@CrossOrigin(origins = "http://localhost:4200")
+public class RequestController {
+    
+    @Autowired
+    private RequestService requestService;
+    
+    @GetMapping
+    public List<RequestDTO> getAllRequests() {
+        return requestService.getAllRequests();
+    }
+    
+    @GetMapping("/user/{userId}")
+    public List<RequestDTO> getRequestsByUser(@PathVariable Long userId) {
+        return requestService.getRequestsByUser(userId);
+    }
+    
+    @PostMapping
+    public ResponseEntity<RequestDTO> createRequest(@RequestBody RequestDTO requestDTO) {
+        RequestDTO createdRequest = requestService.createRequest(requestDTO);
+        return createdRequest != null ? ResponseEntity.ok(createdRequest) : ResponseEntity.badRequest().build();
+    }
+    
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<RequestDTO> approveRequest(@PathVariable Long id, @RequestBody Map<String, String> data) {
+        RequestDTO updatedRequest = requestService.updateRequestStatus(id, "APPROVED", data.get("comments"));
+        return updatedRequest != null ? ResponseEntity.ok(updatedRequest) : ResponseEntity.notFound().build();
+    }
+    
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<RequestDTO> rejectRequest(@PathVariable Long id, @RequestBody Map<String, String> data) {
+        RequestDTO updatedRequest = requestService.updateRequestStatus(id, "REJECTED", data.get("comments"));
+        return updatedRequest != null ? ResponseEntity.ok(updatedRequest) : ResponseEntity.notFound().build();
+    }
+    
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<RequestDTO> cancelRequest(@PathVariable Long id) {
+        RequestDTO cancelledRequest = requestService.cancelRequest(id);
+        return cancelledRequest != null ? ResponseEntity.ok(cancelledRequest) : ResponseEntity.badRequest().build();
+    }
+}
