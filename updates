@@ -1,9 +1,11 @@
 package com.inventory.service;
 
+import com.inventory.config.JwtAuthenticationFilter;
 import com.inventory.dto.UserDTO;
 import com.inventory.model.User;
 import com.inventory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,19 +17,24 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     public Map<String, Object> login(String username, String password) {
         Optional<User> userOpt = userRepository.findByUsername(username);
 
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(password)) {
+        if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
             User user = userOpt.get();
-            UserDTO userDTO = new UserDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getName(),
-                user.getRole().toString()
-            );
+            String token = jwtAuthenticationFilter.generateToken(username, user.getRole().name());
+
+            UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getRole().toString());
+
             return Map.of(
                 "success", true,
+                "token", token,
                 "user", userDTO
             );
         }
@@ -41,6 +48,8 @@ package com.inventory.controller;
 import com.inventory.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -65,5 +74,16 @@ public class AuthController {
         } else {
             return ResponseEntity.badRequest().body(result);
         }
+    }
+
+    @GetMapping("/debug")
+    public ResponseEntity<Map<String, Object>> debugAuth() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Map<String, Object> response = Map.of(
+            "authenticated", auth != null && auth.isAuthenticated(),
+            "username", auth != null ? auth.getName() : null,
+            "authorities", auth != null ? auth.getAuthorities() : null
+        );
+        return ResponseEntity.ok(response);
     }
 }
