@@ -21,19 +21,14 @@ export interface LoginResponse {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
-  private tokenKey = 'auth_token';
-  private userKey = 'auth_user';
+
+  private isLoggedInUser: User | null = null;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    // Initialize from localStorage
-    const token = this.getToken();
-    const storedUser = localStorage.getItem(this.userKey);
-    if (token && storedUser) {
-      this.setCurrentUser(JSON.parse(storedUser));
-    }
-  }
+  private authToken: string | null = null;
+
+  constructor(private http: HttpClient) {}
 
   // POST /api/auth/login
   login(username: string, password: string): Observable<LoginResponse> {
@@ -41,8 +36,7 @@ export class AuthService {
       .pipe(
         tap((response: LoginResponse) => {
           if (response.success && response.token && response.user) {
-            localStorage.setItem(this.tokenKey, response.token);
-            localStorage.setItem(this.userKey, JSON.stringify(response.user));
+            this.authToken = response.token;
             this.setCurrentUser(response.user);
           }
         })
@@ -54,26 +48,26 @@ export class AuthService {
     return this.http.get<User>(`${this.apiUrl}/me`)
       .pipe(
         tap((user: User) => {
-          localStorage.setItem(this.userKey, JSON.stringify(user));
           this.setCurrentUser(user);
         })
       );
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken() && !!this.getCurrentUser();
+    return !!this.authToken && !!this.isLoggedInUser;
   }
 
   setCurrentUser(user: User | null): void {
+    this.isLoggedInUser = user;
     this.currentUserSubject.next(user);
   }
 
   getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
+    return this.isLoggedInUser;
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.authToken;
   }
 
   isAdmin(): boolean {
@@ -81,8 +75,8 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
+    this.authToken = null;
+    this.isLoggedInUser = null;
     this.setCurrentUser(null);
   }
 }
