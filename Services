@@ -1,0 +1,182 @@
+// UserService.java
+package com.inventory.service;
+
+import com.inventory.dto.UserDTO;
+import com.inventory.model.User;
+import com.inventory.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class UserService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getRole().toString()))
+                .collect(Collectors.toList());
+    }
+    
+    public UserDTO getUserById(Long id) {
+        return userRepository.findById(id)
+                .map(user -> new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getRole().toString()))
+                .orElse(null);
+    }
+    
+    public UserDTO createUser(UserDTO userDTO) {
+        User user = new User(userDTO.getUsername(), userDTO.getPassword(), userDTO.getName(), 
+                User.Role.valueOf(userDTO.getRole()));
+        return new UserDTO(userRepository.save(user).getId(), user.getUsername(), user.getName(), user.getRole().toString());
+    }
+    
+    public UserDTO updateUser(Long id, UserDTO userDTO) {
+        return userRepository.findById(id).map(user -> {
+            user.setUsername(userDTO.getUsername());
+            user.setPassword(userDTO.getPassword());
+            user.setName(userDTO.getName());
+            user.setRole(User.Role.valueOf(userDTO.getRole()));
+            return new UserDTO(userRepository.save(user).getId(), user.getUsername(), user.getName(), user.getRole().toString());
+        }).orElse(null);
+    }
+    
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+}
+
+// ItemService.java
+package com.inventory.service;
+
+import com.inventory.dto.ItemDTO;
+import com.inventory.model.Item;
+import com.inventory.repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ItemService {
+    
+    @Autowired
+    private ItemRepository itemRepository;
+    
+    public List<ItemDTO> getAllItems() {
+        return itemRepository.findAll().stream()
+                .map(item -> new ItemDTO(item.getId(), item.getName(), item.getDescription(), item.getQuantity()))
+                .collect(Collectors.toList());
+    }
+    
+    public ItemDTO getItemById(Long id) {
+        return itemRepository.findById(id)
+                .map(item -> new ItemDTO(item.getId(), item.getName(), item.getDescription(), item.getQuantity()))
+                .orElse(null);
+    }
+    
+    public ItemDTO createItem(ItemDTO itemDTO) {
+        Item item = new Item(itemDTO.getName(), itemDTO.getDescription(), itemDTO.getQuantity());
+        return new ItemDTO(itemRepository.save(item).getId(), item.getName(), item.getDescription(), item.getQuantity());
+    }
+    
+    public ItemDTO updateItem(Long id, ItemDTO itemDTO) {
+        return itemRepository.findById(id).map(item -> {
+            item.setName(itemDTO.getName());
+            item.setDescription(itemDTO.getDescription());
+            item.setQuantity(itemDTO.getQuantity());
+            return new ItemDTO(itemRepository.save(item).getId(), item.getName(), item.getDescription(), item.getQuantity());
+        }).orElse(null);
+    }
+    
+    public void deleteItem(Long id) {
+        itemRepository.deleteById(id);
+    }
+}
+
+// RequestService.java
+package com.inventory.service;
+
+import com.inventory.dto.RequestDTO;
+import com.inventory.model.Request;
+import com.inventory.model.User;
+import com.inventory.model.Item;
+import com.inventory.repository.RequestRepository;
+import com.inventory.repository.UserRepository;
+import com.inventory.repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class RequestService {
+    
+    @Autowired
+    private RequestRepository requestRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private ItemRepository itemRepository;
+    
+    public List<RequestDTO> getAllRequests() {
+        return requestRepository.findAll().stream()
+                .map(request -> new RequestDTO(request.getId(), request.getUser().getId(), request.getItem().getId(),
+                        request.getQuantity(), request.getReason(), request.getStatus().toString(),
+                        request.getRequestDate(), request.getResponseDate(), request.getAdminComments()))
+                .collect(Collectors.toList());
+    }
+    
+    public List<RequestDTO> getRequestsByUser(Long userId) {
+        return requestRepository.findByUserId(userId).stream()
+                .map(request -> new RequestDTO(request.getId(), request.getUser().getId(), request.getItem().getId(),
+                        request.getQuantity(), request.getReason(), request.getStatus().toString(),
+                        request.getRequestDate(), request.getResponseDate(), request.getAdminComments()))
+                .collect(Collectors.toList());
+    }
+    
+    public RequestDTO createRequest(RequestDTO requestDTO) {
+        User user = userRepository.findById(requestDTO.getUserId()).orElse(null);
+        Item item = itemRepository.findById(requestDTO.getItemId()).orElse(null);
+        
+        if (user != null && item != null) {
+            Request request = new Request(user, item, requestDTO.getQuantity(), requestDTO.getReason());
+            return new RequestDTO(requestRepository.save(request).getId(), user.getId(), item.getId(),
+                    request.getQuantity(), request.getReason(), request.getStatus().toString(),
+                    request.getRequestDate(), request.getResponseDate(), request.getAdminComments());
+        }
+        return null;
+    }
+    
+    public RequestDTO updateRequestStatus(Long id, String status, String comments) {
+        return requestRepository.findById(id).map(request -> {
+            request.setStatus(Request.Status.valueOf(status.toUpperCase()));
+            request.setResponseDate(LocalDateTime.now());
+            request.setAdminComments(comments);
+            return new RequestDTO(requestRepository.save(request).getId(), request.getUser().getId(), request.getItem().getId(),
+                    request.getQuantity(), request.getReason(), request.getStatus().toString(),
+                    request.getRequestDate(), request.getResponseDate(), request.getAdminComments());
+        }).orElse(null);
+    }
+    
+    public RequestDTO cancelRequest(Long id) {
+        return requestRepository.findById(id).map(request -> {
+            if (request.getStatus() == Request.Status.PENDING) {
+                request.setStatus(Request.Status.CANCELLED);
+                request.setResponseDate(LocalDateTime.now());
+                return new RequestDTO(requestRepository.save(request).getId(), request.getUser().getId(), request.getItem().getId(),
+                        request.getQuantity(), request.getReason(), request.getStatus().toString(),
+                        request.getRequestDate(), request.getResponseDate(), request.getAdminComments());
+            }
+            return null;
+        }).orElse(null);
+    }
+}
