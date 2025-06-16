@@ -1,0 +1,926 @@
+// UserDTO.java
+package com.inventory.dto;
+
+import com.inventory.model.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class UserDTO {
+private Long id;
+
+```
+@NotBlank(message = "Username is required")
+private String username;
+
+@NotBlank(message = "Password is required")
+private String password;
+
+@NotBlank(message = "Name is required")
+private String name;
+
+@NotNull(message = "Role is required")
+private User.Role role;
+
+// Constructors
+public UserDTO() {}
+
+public UserDTO(Long id, String username, String name, User.Role role) {
+    this.id = id;
+    this.username = username;
+    this.name = name;
+    this.role = role;
+    // Don't include password in response DTOs
+}
+
+public UserDTO(String username, String password, String name, User.Role role) {
+    this.username = username;
+    this.password = password;
+    this.name = name;
+    this.role = role;
+}
+
+// Getters and Setters
+public Long getId() { return id; }
+public void setId(Long id) { this.id = id; }
+
+public String getUsername() { return username; }
+public void setUsername(String username) { this.username = username; }
+
+public String getPassword() { return password; }
+public void setPassword(String password) { this.password = password; }
+
+public String getName() { return name; }
+public void setName(String name) { this.name = name; }
+
+public User.Role getRole() { return role; }
+public void setRole(User.Role role) { this.role = role; }
+```
+
+}
+
+// LoginRequestDTO.java
+package com.inventory.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public class LoginRequestDTO {
+@NotBlank(message = “Username is required”)
+private String username;
+
+```
+@NotBlank(message = "Password is required")
+private String password;
+
+// Constructors
+public LoginRequestDTO() {}
+
+public LoginRequestDTO(String username, String password) {
+    this.username = username;
+    this.password = password;
+}
+
+// Getters and Setters
+public String getUsername() { return username; }
+public void setUsername(String username) { this.username = username; }
+
+public String getPassword() { return password; }
+public void setPassword(String password) { this.password = password; }
+```
+
+}
+
+// LoginResponseDTO.java
+package com.inventory.dto;
+
+public class LoginResponseDTO {
+private boolean success;
+private String message;
+private UserDTO user;
+
+```
+// Constructors
+public LoginResponseDTO() {}
+
+public LoginResponseDTO(boolean success, String message) {
+    this.success = success;
+    this.message = message;
+}
+
+public LoginResponseDTO(boolean success, UserDTO user) {
+    this.success = success;
+    this.user = user;
+}
+
+// Getters and Setters
+public boolean isSuccess() { return success; }
+public void setSuccess(boolean success) { this.success = success; }
+
+public String getMessage() { return message; }
+public void setMessage(String message) { this.message = message; }
+
+public UserDTO getUser() { return user; }
+public void setUser(UserDTO user) { this.user = user; }
+```
+
+}
+
+// ItemDTO.java
+package com.inventory.dto;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class ItemDTO {
+private Long id;
+
+```
+@NotBlank(message = "Item name is required")
+private String name;
+
+private String description;
+
+@NotNull(message = "Quantity is required")
+@Min(value = 0, message = "Quantity must be non-negative")
+private Integer quantity;
+
+// Constructors
+public ItemDTO() {}
+
+public ItemDTO(Long id, String name, String description, Integer quantity) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.quantity = quantity;
+}
+
+public ItemDTO(String name, String description, Integer quantity) {
+    this.name = name;
+    this.description = description;
+    this.quantity = quantity;
+}
+
+// Getters and Setters
+public Long getId() { return id; }
+public void setId(Long id) { this.id = id; }
+
+public String getName() { return name; }
+public void setName(String name) { this.name = name; }
+
+public String getDescription() { return description; }
+public void setDescription(String description) { this.description = description; }
+
+public Integer getQuantity() { return quantity; }
+public void setQuantity(Integer quantity) { this.quantity = quantity; }
+```
+
+}
+
+// RequestDTO.java
+package com.inventory.dto;
+
+import com.inventory.model.Request;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
+public class RequestDTO {
+private Long id;
+
+```
+@NotNull(message = "User ID is required")
+private Long userId;
+private String userName;
+
+@NotNull(message = "Item ID is required")
+private Long itemId;
+private String itemName;
+
+@NotNull(message = "Quantity is required")
+@Min(value = 1, message = "Quantity must be at least 1")
+private Integer quantity;
+
+private String reason;
+private Request.Status status;
+private LocalDateTime requestDate;
+private LocalDateTime responseDate;
+private String adminComments;
+
+// Constructors
+public RequestDTO() {}
+
+public RequestDTO(Long userId, Long itemId, Integer quantity, String reason) {
+    this.userId = userId;
+    this.itemId = itemId;
+    this.quantity = quantity;
+    this.reason = reason;
+}
+
+// Getters and Setters
+public Long getId() { return id; }
+public void setId(Long id) { this.id = id; }
+
+public Long getUserId() { return userId; }
+public void setUserId(Long userId) { this.userId = userId; }
+
+public String getUserName() { return userName; }
+public void setUserName(String userName) { this.userName = userName; }
+
+public Long getItemId() { return itemId; }
+public void setItemId(Long itemId) { this.itemId = itemId; }
+
+public String getItemName() { return itemName; }
+public void setItemName(String itemName) { this.itemName = itemName; }
+
+public Integer getQuantity() { return quantity; }
+public void setQuantity(Integer quantity) { this.quantity = quantity; }
+
+public String getReason() { return reason; }
+public void setReason(String reason) { this.reason = reason; }
+
+public Request.Status getStatus() { return status; }
+public void setStatus(Request.Status status) { this.status = status; }
+
+public LocalDateTime getRequestDate() { return requestDate; }
+public void setRequestDate(LocalDateTime requestDate) { this.requestDate = requestDate; }
+
+public LocalDateTime getResponseDate() { return responseDate; }
+public void setResponseDate(LocalDateTime responseDate) { this.responseDate = responseDate; }
+
+public String getAdminComments() { return adminComments; }
+public void setAdminComments(String adminComments) { this.adminComments = adminComments; }
+```
+
+}
+
+// RequestActionDTO.java
+package com.inventory.dto;
+
+public class RequestActionDTO {
+private String comments;
+
+```
+// Constructors
+public RequestActionDTO() {}
+
+public RequestActionDTO(String comments) {
+    this.comments = comments;
+}
+
+// Getters and Setters
+public String getComments() { return comments; }
+public void setComments(String comments) { this.comments = comments; }
+```
+
+}
+
+// ApiResponse.java
+package com.inventory.dto;
+
+public class ApiResponse<T> {
+private boolean success;
+private String message;
+private T data;
+
+```
+// Constructors
+public ApiResponse() {}
+
+public ApiResponse(boolean success, String message) {
+    this.success = success;
+    this.message = message;
+}
+
+public ApiResponse(boolean success, T data) {
+    this.success = success;
+    this.data = data;
+}
+
+public ApiResponse(boolean success, String message, T data) {
+    this.success = success;
+    this.message = message;
+    this.data = data;
+}
+
+// Static factory methods
+public static <T> ApiResponse<T> success(T data) {
+    return new ApiResponse<>(true, data);
+}
+
+public static <T> ApiResponse<T> success(String message, T data) {
+    return new ApiResponse<>(true, message, data);
+}
+
+public static <T> ApiResponse<T> error(String message) {
+    return new ApiResponse<>(false, message);
+}
+
+// Getters and Setters
+public boolean isSuccess() { return success; }
+public void setSuccess(boolean success) { this.success = success; }
+
+public String getMessage() { return message; }
+public void setMessage(String message) { this.message = message; }
+
+public T getData() { return data; }
+public void setData(T data) { this.data = data; }
+```
+
+}
+
+// UserService.java
+package com.inventory.service;
+
+import com.inventory.dto.UserDTO;
+import com.inventory.model.User;
+import com.inventory.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class UserService {
+
+```
+@Autowired
+private UserRepository userRepository;
+
+public List<UserDTO> getAllUsers() {
+    return userRepository.findAll().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
+
+public Optional<UserDTO> getUserById(Long id) {
+    return userRepository.findById(id)
+            .map(this::convertToDTO);
+}
+
+public Optional<UserDTO> getUserByUsername(String username) {
+    return userRepository.findByUsername(username)
+            .map(this::convertToDTO);
+}
+
+public UserDTO createUser(UserDTO userDTO) {
+    User user = convertToEntity(userDTO);
+    User savedUser = userRepository.save(user);
+    return convertToDTO(savedUser);
+}
+
+public Optional<UserDTO> updateUser(Long id, UserDTO userDTO) {
+    return userRepository.findById(id)
+            .map(existingUser -> {
+                existingUser.setUsername(userDTO.getUsername());
+                existingUser.setName(userDTO.getName());
+                existingUser.setRole(userDTO.getRole());
+                if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+                    existingUser.setPassword(userDTO.getPassword());
+                }
+                return convertToDTO(userRepository.save(existingUser));
+            });
+}
+
+public boolean deleteUser(Long id) {
+    if (userRepository.existsById(id)) {
+        userRepository.deleteById(id);
+        return true;
+    }
+    return false;
+}
+
+public Optional<User> authenticateUser(String username, String password) {
+    return userRepository.findByUsername(username)
+            .filter(user -> user.getPassword().equals(password));
+}
+
+private UserDTO convertToDTO(User user) {
+    return new UserDTO(user.getId(), user.getUsername(), user.getName(), user.getRole());
+}
+
+private User convertToEntity(UserDTO userDTO) {
+    User user = new User();
+    user.setId(userDTO.getId());
+    user.setUsername(userDTO.getUsername());
+    user.setPassword(userDTO.getPassword());
+    user.setName(userDTO.getName());
+    user.setRole(userDTO.getRole());
+    return user;
+}
+```
+
+}
+
+// ItemService.java
+package com.inventory.service;
+
+import com.inventory.dto.ItemDTO;
+import com.inventory.model.Item;
+import com.inventory.repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class ItemService {
+
+```
+@Autowired
+private ItemRepository itemRepository;
+
+public List<ItemDTO> getAllItems() {
+    return itemRepository.findAll().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
+
+public Optional<ItemDTO> getItemById(Long id) {
+    return itemRepository.findById(id)
+            .map(this::convertToDTO);
+}
+
+public ItemDTO createItem(ItemDTO itemDTO) {
+    Item item = convertToEntity(itemDTO);
+    Item savedItem = itemRepository.save(item);
+    return convertToDTO(savedItem);
+}
+
+public Optional<ItemDTO> updateItem(Long id, ItemDTO itemDTO) {
+    return itemRepository.findById(id)
+            .map(existingItem -> {
+                existingItem.setName(itemDTO.getName());
+                existingItem.setDescription(itemDTO.getDescription());
+                existingItem.setQuantity(itemDTO.getQuantity());
+                return convertToDTO(itemRepository.save(existingItem));
+            });
+}
+
+public boolean deleteItem(Long id) {
+    if (itemRepository.existsById(id)) {
+        itemRepository.deleteById(id);
+        return true;
+    }
+    return false;
+}
+
+public boolean updateItemQuantity(Long itemId, Integer newQuantity) {
+    return itemRepository.findById(itemId)
+            .map(item -> {
+                item.setQuantity(newQuantity);
+                itemRepository.save(item);
+                return true;
+            })
+            .orElse(false);
+}
+
+public boolean decreaseItemQuantity(Long itemId, Integer quantity) {
+    return itemRepository.findById(itemId)
+            .filter(item -> item.getQuantity() >= quantity)
+            .map(item -> {
+                item.setQuantity(item.getQuantity() - quantity);
+                itemRepository.save(item);
+                return true;
+            })
+            .orElse(false);
+}
+
+private ItemDTO convertToDTO(Item item) {
+    return new ItemDTO(item.getId(), item.getName(), item.getDescription(), item.getQuantity());
+}
+
+private Item convertToEntity(ItemDTO itemDTO) {
+    Item item = new Item();
+    item.setId(itemDTO.getId());
+    item.setName(itemDTO.getName());
+    item.setDescription(itemDTO.getDescription());
+    item.setQuantity(itemDTO.getQuantity());
+    return item;
+}
+```
+
+}
+
+// RequestService.java
+package com.inventory.service;
+
+import com.inventory.dto.RequestDTO;
+import com.inventory.model.Request;
+import com.inventory.model.User;
+import com.inventory.model.Item;
+import com.inventory.repository.RequestRepository;
+import com.inventory.repository.UserRepository;
+import com.inventory.repository.ItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class RequestService {
+
+```
+@Autowired
+private RequestRepository requestRepository;
+
+@Autowired
+private UserRepository userRepository;
+
+@Autowired
+private ItemRepository itemRepository;
+
+@Autowired
+private ItemService itemService;
+
+public List<RequestDTO> getAllRequests() {
+    return requestRepository.findAll().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
+
+public Optional<RequestDTO> getRequestById(Long id) {
+    return requestRepository.findById(id)
+            .map(this::convertToDTO);
+}
+
+public List<RequestDTO> getRequestsByUserId(Long userId) {
+    return requestRepository.findByUserId(userId).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
+
+public List<RequestDTO> getRequestsByStatus(Request.Status status) {
+    return requestRepository.findByStatus(status).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
+
+public Optional<RequestDTO> createRequest(RequestDTO requestDTO) {
+    Optional<User> userOpt = userRepository.findById(requestDTO.getUserId());
+    Optional<Item> itemOpt = itemRepository.findById(requestDTO.getItemId());
+    
+    if (userOpt.isPresent() && itemOpt.isPresent()) {
+        Request request = new Request();
+        request.setUser(userOpt.get());
+        request.setItem(itemOpt.get());
+        request.setQuantity(requestDTO.getQuantity());
+        request.setReason(requestDTO.getReason());
+        request.setStatus(Request.Status.PENDING);
+        request.setRequestDate(LocalDateTime.now());
+        
+        Request savedRequest = requestRepository.save(request);
+        return Optional.of(convertToDTO(savedRequest));
+    }
+    
+    return Optional.empty();
+}
+
+public Optional<RequestDTO> approveRequest(Long requestId, String adminComments) {
+    return requestRepository.findById(requestId)
+            .filter(request -> request.getStatus() == Request.Status.PENDING)
+            .map(request -> {
+                // Decrease item quantity
+                itemService.decreaseItemQuantity(request.getItem().getId(), request.getQuantity());
+                
+                request.setStatus(Request.Status.APPROVED);
+                request.setResponseDate(LocalDateTime.now());
+                request.setAdminComments(adminComments);
+                
+                return convertToDTO(requestRepository.save(request));
+            });
+}
+
+public Optional<RequestDTO> rejectRequest(Long requestId, String adminComments) {
+    return requestRepository.findById(requestId)
+            .filter(request -> request.getStatus() == Request.Status.PENDING)
+            .map(request -> {
+                request.setStatus(Request.Status.REJECTED);
+                request.setResponseDate(LocalDateTime.now());
+                request.setAdminComments(adminComments);
+                
+                return convertToDTO(requestRepository.save(request));
+            });
+}
+
+public Optional<RequestDTO> cancelRequest(Long requestId) {
+    return requestRepository.findById(requestId)
+            .filter(request -> request.getStatus() == Request.Status.PENDING)
+            .map(request -> {
+                request.setStatus(Request.Status.CANCELLED);
+                request.setResponseDate(LocalDateTime.now());
+                
+                return convertToDTO(requestRepository.save(request));
+            });
+}
+
+private RequestDTO convertToDTO(Request request) {
+    RequestDTO dto = new RequestDTO();
+    dto.setId(request.getId());
+    dto.setUserId(request.getUser().getId());
+    dto.setUserName(request.getUser().getName());
+    dto.setItemId(request.getItem().getId());
+    dto.setItemName(request.getItem().getName());
+    dto.setQuantity(request.getQuantity());
+    dto.setReason(request.getReason());
+    dto.setStatus(request.getStatus());
+    dto.setRequestDate(request.getRequestDate());
+    dto.setResponseDate(request.getResponseDate());
+    dto.setAdminComments(request.getAdminComments());
+    return dto;
+}
+```
+
+}
+
+// AuthService.java
+package com.inventory.service;
+
+import com.inventory.dto.LoginRequestDTO;
+import com.inventory.dto.LoginResponseDTO;
+import com.inventory.dto.UserDTO;
+import com.inventory.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+```
+@Autowired
+private UserService userService;
+
+public LoginResponseDTO authenticate(LoginRequestDTO loginRequest) {
+    return userService.getUserByUsername(loginRequest.getUsername())
+            .filter(userDTO -> {
+                // In a real application, you would use proper password hashing
+                // This is just for demonstration purposes
+                return userService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword()).isPresent();
+            })
+            .map(userDTO -> new LoginResponseDTO(true, userDTO))
+            .orElse(new LoginResponseDTO(false, "Invalid credentials"));
+}
+```
+
+}
+
+// Updated AuthController.java
+package com.inventory.controller;
+
+import com.inventory.dto.LoginRequestDTO;
+import com.inventory.dto.LoginResponseDTO;
+import com.inventory.dto.ApiResponse;
+import com.inventory.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping(”/api/auth”)
+@CrossOrigin(origins = “http://localhost:4200”)
+@Validated
+public class AuthController {
+
+```
+@Autowired
+private AuthService authService;
+
+@PostMapping("/login")
+public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO loginRequest) {
+    LoginResponseDTO response = authService.authenticate(loginRequest);
+    
+    if (response.isSuccess()) {
+        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+    } else {
+        return ResponseEntity.badRequest().body(ApiResponse.error(response.getMessage()));
+    }
+}
+```
+
+}
+
+// Updated ItemController.java
+package com.inventory.controller;
+
+import com.inventory.dto.ItemDTO;
+import com.inventory.dto.ApiResponse;
+import com.inventory.service.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping(”/api/items”)
+@CrossOrigin(origins = “http://localhost:4200”)
+@Validated
+public class ItemController {
+
+```
+@Autowired
+private ItemService itemService;
+
+@GetMapping
+public ResponseEntity<ApiResponse<List<ItemDTO>>> getAllItems() {
+    List<ItemDTO> items = itemService.getAllItems();
+    return ResponseEntity.ok(ApiResponse.success("Items retrieved successfully", items));
+}
+
+@GetMapping("/{id}")
+public ResponseEntity<ApiResponse<ItemDTO>> getItemById(@PathVariable Long id) {
+    return itemService.getItemById(id)
+            .map(item -> ResponseEntity.ok(ApiResponse.success("Item found", item)))
+            .orElse(ResponseEntity.notFound().build());
+}
+
+@PostMapping
+public ResponseEntity<ApiResponse<ItemDTO>> createItem(@Valid @RequestBody ItemDTO itemDTO) {
+    ItemDTO createdItem = itemService.createItem(itemDTO);
+    return ResponseEntity.ok(ApiResponse.success("Item created successfully", createdItem));
+}
+
+@PutMapping("/{id}")
+public ResponseEntity<ApiResponse<ItemDTO>> updateItem(@PathVariable Long id, @Valid @RequestBody ItemDTO itemDTO) {
+    return itemService.updateItem(id, itemDTO)
+            .map(item -> ResponseEntity.ok(ApiResponse.success("Item updated successfully", item)))
+            .orElse(ResponseEntity.notFound().build());
+}
+
+@DeleteMapping("/{id}")
+public ResponseEntity<ApiResponse<Void>> deleteItem(@PathVariable Long id) {
+    if (itemService.deleteItem(id)) {
+        return ResponseEntity.ok(ApiResponse.success("Item deleted successfully", null));
+    }
+    return ResponseEntity.notFound().build();
+}
+```
+
+}
+
+// Updated RequestController.java
+package com.inventory.controller;
+
+import com.inventory.dto.RequestDTO;
+import com.inventory.dto.RequestActionDTO;
+import com.inventory.dto.ApiResponse;
+import com.inventory.model.Request;
+import com.inventory.service.RequestService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping(”/api/requests”)
+@CrossOrigin(origins = “http://localhost:4200”)
+@Validated
+public class RequestController {
+
+```
+@Autowired
+private RequestService requestService;
+
+@GetMapping
+public ResponseEntity<ApiResponse<List<RequestDTO>>> getAllRequests() {
+    List<RequestDTO> requests = requestService.getAllRequests();
+    return ResponseEntity.ok(ApiResponse.success("Requests retrieved successfully", requests));
+}
+
+@GetMapping("/{id}")
+public ResponseEntity<ApiResponse<RequestDTO>> getRequestById(@PathVariable Long id) {
+    return requestService.getRequestById(id)
+            .map(request -> ResponseEntity.ok(ApiResponse.success("Request found", request)))
+            .orElse(ResponseEntity.notFound().build());
+}
+
+@GetMapping("/user/{userId}")
+public ResponseEntity<ApiResponse<List<RequestDTO>>> getRequestsByUser(@PathVariable Long userId) {
+    List<RequestDTO> requests = requestService.getRequestsByUserId(userId);
+    return ResponseEntity.ok(ApiResponse.success("User requests retrieved successfully", requests));
+}
+
+@GetMapping("/status/{status}")
+public ResponseEntity<ApiResponse<List<RequestDTO>>> getRequestsByStatus(@PathVariable Request.Status status) {
+    List<RequestDTO> requests = requestService.getRequestsByStatus(status);
+    return ResponseEntity.ok(ApiResponse.success("Requests by status retrieved successfully", requests));
+}
+
+@PostMapping
+public ResponseEntity<ApiResponse<RequestDTO>> createRequest(@Valid @RequestBody RequestDTO requestDTO) {
+    return requestService.createRequest(requestDTO)
+            .map(request -> ResponseEntity.ok(ApiResponse.success("Request created successfully", request)))
+            .orElse(ResponseEntity.badRequest().body(ApiResponse.error("Failed to create request")));
+}
+
+@PutMapping("/{id}/approve")
+public ResponseEntity<ApiResponse<RequestDTO>> approveRequest(@PathVariable Long id, @RequestBody RequestActionDTO actionDTO) {
+    return requestService.approveRequest(id, actionDTO.getComments())
+            .map(request -> ResponseEntity.ok(ApiResponse.success("Request approved successfully", request)))
+            .orElse(ResponseEntity.badRequest().body(ApiResponse.error("Failed to approve request")));
+}
+
+@PutMapping("/{id}/reject")
+public ResponseEntity<ApiResponse<RequestDTO>> rejectRequest(@PathVariable Long id, @RequestBody RequestActionDTO actionDTO) {
+    return requestService.rejectRequest(id, actionDTO.getComments())
+            .map(request -> ResponseEntity.ok(ApiResponse.success("Request rejected successfully", request)))
+            .orElse(ResponseEntity.badRequest().body(ApiResponse.error("Failed to reject request")));
+}
+
+@PutMapping("/{id}/cancel")
+public ResponseEntity<ApiResponse<RequestDTO>> cancelRequest(@PathVariable Long id) {
+    return requestService.cancelRequest(id)
+            .map(request -> ResponseEntity.ok(ApiResponse.success("Request cancelled successfully", request)))
+            .orElse(ResponseEntity.badRequest().body(ApiResponse.error("Failed to cancel request")));
+}
+```
+
+}
+
+// Updated UserRepository.java
+package com.inventory.repository;
+
+import com.inventory.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+Optional<User> findByUsername(String username);
+
+```
+boolean existsByUsername(String username);
+
+List<User> findByRole(User.Role role);
+
+@Query("SELECT u FROM User u WHERE u.name LIKE %:name%")
+List<User> findByNameContaining(@Param("name") String name);
+```
+
+}
+
+// Updated ItemRepository.java
+package com.inventory.repository;
+
+import com.inventory.model.Item;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.util.List;
+
+public interface ItemRepository extends JpaRepository<Item, Long> {
+List<Item> findByNameContaining(String name);
+
+```
+List<Item> findByQuantityLessThan(Integer quantity);
+
+@Query("SELECT i FROM Item i WHERE i.quantity = 0")
+List<Item> findOutOfStockItems();
+
+@Query("SELECT i FROM Item i WHERE i.quantity <= :threshold")
+List<Item> findLowStockItems(@Param("threshold") Integer threshold);
+```
+
+}
+
+// Updated RequestRepository.java
+package com.inventory.repository;
+
+import com.inventory.model.Request;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface RequestRepository extends JpaRepository<Request, Long> {
+List<Request> findByUserId(Long userId);
+
+```
+List<Request> findByStatus(Request.Status status);
+
+List<Request> findByItemId(Long itemId);
+
+List<Request> findByRequestDateBetween(LocalDateTime start, LocalDateTime end);
+
+@Query("SELECT r FROM Request r WHERE r.user.id = :userId AND r.status = :status")
+List<Request> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") Request.Status status);
+
+@Query("SELECT r FROM Request r ORDER BY r.requestDate DESC")
+List<Request> findAllOrderByRequestDateDesc();
+
+@Query("SELECT COUNT(r) FROM Request r WHERE r.status = :status")
+Long countByStatus(@Param("status") Request.Status status);
+```
+
+}
