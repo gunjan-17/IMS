@@ -1,0 +1,25 @@
+user_group_rules (
+    rule_id (PK),
+    group_id (FK),
+    rule_name,
+    rule_type, -- 'CLASSIFICATION', 'ACTIVATION', 'DEACTIVATION'
+    trigger_type, -- 'IMMEDIATE', 'ON_CHANGE', 'SCHEDULED'
+    rule_order,
+    logical_operator,
+    is_active,
+    created_by,
+    created_date
+)
+
+rule_conditions (
+    condition_id (PK),
+    rule_id (FK),
+    table_name,
+    column_name,
+    operator, -- '=', '!=', 'IN', 'IS_NULL', 'IS_NOT_NULL', 'CHANGED_FROM', 'CHANGED_TO'
+    condition_values, -- JSON array
+    previous_values, -- For change detection
+    logical_connector,
+    condition_order,
+    is_active
+)
